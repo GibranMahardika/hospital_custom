@@ -1,0 +1,158 @@
+<odoo>
+
+    <record id="hospital_patient_tree_view" model="ir.ui.view">
+        <field name="name">hospital.patient.tree.view</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <tree string="hospital_patient_tree">
+                <field name="patient_name"/>
+                <field name="patient_responsible_id"/>
+                <field name="patient_age"/>
+                <field name="patient_gender"/>
+                <field name="patient_note"/>
+                <field name="patient_state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hospital_patient_form_view" model="ir.ui.view">
+        <field name="name">hospital.patient.form.view</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <form string="hospital_patient_form">
+                <header>
+                    <button id="btn_confirm" name="act_confirm" string="Confirm" class="btn-primary"
+                            attrs="{'invisible':[('patient_state','!=','draft')]}"
+                            type="object"/>
+                    <button id="btn_done" name="act_done" string="Mark As Done" class="btn-primary"
+                            attrs="{'invisible':[('patient_state','!=','confirm')]}"
+                            type="object"/>
+                    <button id="btn_draft" name="act_draft" string="Set to Draft" class="btn-primary"
+                            attrs="{'invisible':[('patient_state','!=','done')]}"
+                            type="object"/>
+                    <button id="btn_cancel" name="act_cancel" string="Cancel" class="btn-danger"
+                            attrs="{'invisible':[('patient_state','!=','confirm')]}"
+                            type="object"/>
+                    <!--                    attrs="{'invisible':[('state','!=','draft')]}"-->
+                    <field name="patient_state" widget="statusbar" options="{'clickable' : '1'}"
+                           statusbar_visible="draft,done,confirm"/>
+                    <!--                    statusbar_visible="open,posted,confirm"-->
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="patient_reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_name"/>
+                            <field name="patient_responsible_id"/>
+                            <field name="patient_age"/>
+                        </group>
+                        <group>
+                            <field name="patient_gender"/>
+                            <field name="patient_address"/>
+                        </group>
+                        <group>
+                            <field name="patient_note"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="hospital_patient_kanban_view">
+        <field name="name">hospital.patient.kanban.view</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="patient_name"/>
+                <field name="patient_age"/>
+                <field name="patient_gender"/>
+                <field name="patient_address"/>
+                <field name="patient_note"/>
+                <templates>
+                    <progressbar field="kanban_state" colors='{"done": "success", "blocked": "danger"}'/>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <ul>
+                                    <li>Name :
+                                        <field name="patient_name"/>
+                                    </li>
+                                    <li>Age :
+                                        <field name="patient_age"/>
+                                    </li>
+                                    <li>Gender :
+                                        <field name="patient_gender"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="hospital_patient_search_view" model="ir.ui.view">
+        <field name="name">hospital.patient.search_view</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <search string="Quizzes">
+                <field name="patient_name"/>
+                <field name="patient_note"/>
+                <field name="patient_age"/>
+                <field name="patient_gender"/>
+                <separator/>
+                <filter string="Gender (Male)" name="male_gender_filter" domain="[('patient_gender', '=', 'male')]"/>
+                <filter string="Gender (Female)" name="female_gender_filter" domain="[('patient_gender', '=', 'female')]"/>
+                <group string="Group By" expand="0">
+                    <filter string="Patient Gender" name="patient_gender_filter"
+                            context="{'group_by': 'patient_gender'}"/>
+                    <filter string="Patient Name" name="patient_name_groupBy" context="{'group_by': 'patient_name'}"/>
+                    <filter string="Responsible" name="patient_responsible_id_groupBy"
+                            context="{'group_by': 'patient_responsible_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hospital_patient" model="ir.actions.act_window">
+        <field name="name">Patient</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{'search_default_patient_responsible_id_groupBy':1,'search_default_patient_name_groupBy':1,
+            'search_default_male_gender_filter':1}
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create new Patient
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_hospital_root"
+              name="Hospital"
+              sequence="1"/>
+    <!--              groups="sales_team.group_sale_salesman"-->
+    <menuitem id="menu_patient_root"
+              name="Patient"
+              parent="menu_hospital_root"
+              sequence="1"/>
+
+    <menuitem id="menu_hospital_patient"
+              name="Patient"
+              parent="menu_patient_root"
+              action="action_hospital_patient"
+              sequence="1"/>
+    <!--              groups="sales_team.group_sale_salesman"-->
+</odoo>
