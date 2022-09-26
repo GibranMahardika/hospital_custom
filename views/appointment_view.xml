@@ -1,0 +1,98 @@
+<odoo>
+    <record id="hospital_appointment_tree_view" model="ir.ui.view">
+        <field name="name">hospital.appointment.tree.view</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <tree string="hospital_patient_tree">
+                <field name="appt_name"/>
+                <field name="patient_id"/>
+                <field name="appt_state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hospital_appointment_form_view" model="ir.ui.view">
+        <field name="name">hospital.appointment.form.view</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <form string="hospital_patient_form">
+                <header>
+                    <button id="btn_confirm" name="act_confirm" string="Confirm" class="btn-primary"
+                            attrs="{'invisible':[('appt_state','!=','draft')]}"
+                            confirm="Are you sure that you need to confirm?"
+                            type="object"/>
+                    <button id="btn_done" name="act_done" string="Mark As Done" class="btn-primary"
+                            attrs="{'invisible':[('appt_state','!=','confirm')]}"
+                            type="object"/>
+                    <button id="btn_draft" name="act_draft" string="Set to Draft" class="btn-primary"
+                            attrs="{'invisible':[('appt_state','!=','done')]}"
+                            type="object"/>
+                    <button id="btn_cancel" name="act_cancel" string="Cancel" class="btn-danger"
+                            attrs="{'invisible':[('appt_state','!=','confirm')]}"
+                            confirm="Are you sure that you need to cancel?"
+                            type="object"/>
+                    <!--                    attrs="{'invisible':[('state','!=','draft')]}"-->
+                    <field name="appt_state" widget="statusbar" options="{'clickable' : '0'}"
+                           statusbar_visible="draft,done,confirm"/>
+                    <!--                    statusbar_visible="open,posted,confirm"-->
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="appt_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="hospital_appointment_search_view" model="ir.ui.view">
+        <field name="name">hospital.appointment.search_view</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <search string="Patients">
+                <field name="appt_name"/>
+                <field name="patient_id"/>
+                <separator/>
+                <group string="Group By" expand="0">
+                    <filter string="Patient" name="patient_id_groupBy"
+                            context="{'group_by': 'patient_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hospital_appointment" model="ir.actions.act_window">
+        <field name="name">Appointments</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">treeform</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create new Appointment
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_appointment_root"
+              name="Appointments"
+              sequence="1"/>
+
+    <menuitem id="menu_appointment"
+              name="Appointments"
+              parent="menu_appointment_root"
+              action="action_hospital_appointment"
+              sequence="1"/>
+</odoo>
