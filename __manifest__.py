@@ -32,6 +32,7 @@
         'data/data.xml',
         'views/patient_view.xml',
         'views/kids_view.xml',
+        'views/appointment_view.xml',
         'views/inherit_sale_order_view.xml',
     ],
     # only loaded in demonstration mode
